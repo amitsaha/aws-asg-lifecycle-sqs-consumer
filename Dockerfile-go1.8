@@ -1,0 +1,8 @@
+FROM golang:1.8
+RUN go get -u github.com/golang/dep/cmd/dep
+RUN mkdir -p $GOPATH/src/github.com/amitsaha/aws_asg_lifecycle_consumer
+COPY . $GOPATH/src/github.com/amitsaha/aws_asg_lifecycle_consumer/
+WORKDIR $GOPATH/src/github.com/amitsaha/aws_asg_lifecycle_consumer
+ARG version_string
+RUN dep ensure && go build -ldflags "-X main.Version=${version_string}" && go install && cp $GOPATH/bin/aws_asg_lifecycle_consumer /aws_asg_lifecycle_consumer
+ENTRYPOINT ["/aws_asg_lifecycle_consumer"]

@@ -1,0 +1,19 @@
+FROM ruby:2.3
+RUN  gem install --quiet --no-document fpm
+
+RUN mkdir /aws_asg_lifecycle_consumer-package
+ADD aws_asg_lifecycle_consumer /aws_asg_lifecycle_consumer-package/
+
+RUN mkdir dpkg-source
+WORKDIR dpkg-source
+ARG version_string
+RUN fpm --output-type deb \
+  --input-type dir --chdir /aws_asg_lifecycle_consumer-package \
+  --prefix /usr/bin --name aws_asg_lifecycle_consumer \
+  --version $version_string \
+  --description 'API Actions Consumer' \
+  --url 'https://github.com/api/aws_asg_lifecycle_consumer' \
+  -p aws-asg-lifecycle-consumer-$version_string.deb \
+  aws_asg_lifecycle_consumer && cp *.deb /aws_asg_lifecycle_consumer-package/
+RUN ls
+CMD ["/bin/bash"]
